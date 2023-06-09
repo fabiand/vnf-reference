@@ -1,0 +1,36 @@
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  generateName: vnf-reference-
+spec:
+  instancetype:
+    name: n1.large
+  preference:
+    name: rhel.9
+  running: true
+  template:
+    spec:
+      domain:
+        devices:
+          interfaces:
+          - masquerade: {}
+            name: pod
+          - sriov: {}
+            name: vf0
+      volumes:
+      - containerDisk:
+          image: quay.io/containerdisks/fedora
+        name: boot
+      - cloudInitNoCloud:
+          userData: |
+            #!/bin/sh
+
+            echo 'printed from cloud-init userdata'
+        name: cloudinit
+      networks:
+      - name: pod
+        pod: {}
+      - name: vf0
+        multus:
+          networkName: node0-vf0
