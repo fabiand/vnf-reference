@@ -1,0 +1,28 @@
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataImportCron
+metadata:
+  annotations:
+    cdi.kubevirt.io/storage.bind.immediate.requested: "true"
+  labels:
+    instancetype.kubevirt.io/default-instancetype: n1.large
+    instancetype.kubevirt.io/default-preference: rhel.9
+  name: vnf-reference
+spec:
+  garbageCollect: Outdated
+  managedDataSource: vnf-reference
+  schedule: 46 10/12 * * *
+  template:
+    metadata: {}
+    spec:
+      source:
+        registry:
+          imageStream: vnf-reference
+          pullMethod: node
+      storage:
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            storage: 30Gi
+    status: {}
+status: {}

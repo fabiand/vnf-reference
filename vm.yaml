@@ -9,6 +9,20 @@ spec:
   preference:
     name: rhel.9
   running: true
+  dataVolumeTemplates:
+    - apiVersion: cdi.kubevirt.io/v1beta1
+      kind: DataVolume
+      metadata:
+        generateName: vnf-reference-
+      spec:
+        sourceRef:
+          kind: DataSource
+          name: rhel9
+          namespace: openshift-virtualization-os-images
+        storage:
+          resources:
+            requests:
+              storage: 30Gi
   template:
     spec:
       domain:
@@ -16,11 +30,10 @@ spec:
           interfaces:
           - masquerade: {}
             name: pod
-          - sriov: {}
-            name: vf0
+#          - sriov: {}
+#            name: vf0
       volumes:
-      - containerDisk:
-          image: quay.io/containerdisks/fedora
+      - dataVolume: {}
         name: boot
       - cloudInitNoCloud:
           userData: |
@@ -31,6 +44,6 @@ spec:
       networks:
       - name: pod
         pod: {}
-      - name: vf0
-        multus:
-          networkName: node0-vf0
+#      - name: vf0
+#        multus:
+#          networkName: node0-vf0
